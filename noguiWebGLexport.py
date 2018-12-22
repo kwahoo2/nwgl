@@ -24,7 +24,7 @@
 
 "FreeCAD no-gui webgl exporter"
 
-FREECADPATH = '/usr/lib/freecad/lib'
+FREECADPATH = '/usr/lib/freecad-daily/lib'
 import sys
 sys.path.append(FREECADPATH)
 import FreeCAD,Part,MeshPart,Mesh
@@ -35,20 +35,36 @@ if open.__module__ == '__builtin__':
     
 def export(exportList,filename):
     "exports the given objects to a .html file"
-
-    html = getHTML(exportList)
+    
+    nshp = len(exportList)
+    print "Exporting: " + str(nshp) + " shapes"
+    n = 0
+    VerticesData = []
+    VertexNormalsData = []
+    ItemsData = 0
+    
+    for shp in exportList:
+        Verts,Vnorms,Itms,BBMax,BBCenter = getObjectData(shp)
+        n = n + 1
+        VerticesData = VerticesData + Verts
+        VertexNormalsData = VertexNormalsData + Vnorms
+        ItemsData = ItemsData + Itms
+        print "Shape: " + str(n) + " of " +str(nshp)
+        
+    html = getHTML(VerticesData,VertexNormalsData,ItemsData,BBMax,BBCenter) 
+    print "Saving: " + filename
     outfile = pythonopen(filename,"wb")
     outfile.write(html)
     outfile.close()
-    print "HTML successfully created: " + filename
-    
-def getHTML(shape):
+
+
+
+def getHTML(VerticesData,VertexNormalsData,ItemsData,BBMax,BBCenter):
     "returns the complete HTML code of a viewer for the given shape"
-    VerticesData,VertexNormalsData,ItemsData,BBMax,BBCenter = getObjectData(shape)
     template = getTemplate()
-    template = template.replace("$verticesData",VerticesData)
-    template = template.replace("$vertexnormalsData",VertexNormalsData)
-    template = template.replace("$itemsData",ItemsData)
+    template = template.replace("$verticesData",str(VerticesData))
+    template = template.replace("$vertexnormalsData",str(VertexNormalsData))
+    template = template.replace("$itemsData",str(ItemsData))
     template = template.replace("$bbMax",str(BBMax))
     template = template.replace("$bbX",str(-BBCenter.x))
     template = template.replace("$bbY",str(-BBCenter.y))
@@ -56,9 +72,9 @@ def getHTML(shape):
        
 def getObjectData(shape):
     
-    vertices = ""
-    normals = ""
-    items = ""
+    vertices = []
+    normals = []
+    items = 0
 
     try: 
         fcmesh = shape.tessellate(0.1)
@@ -83,14 +99,12 @@ def getObjectData(shape):
            #normals = normals + [gen.getNormal(i).getValue()[0]] + [gen.getNormal(i).getValue()[1]] + [gen.getNormal(i).getValue()[2]]
            normals = normals + [round(gen.getNormal(i).getValue()[0], rnd)] + [round(gen.getNormal(i).getValue()[1], rnd)] + [round(gen.getNormal(i).getValue()[2], rnd)] #rounded to save space
 
-        strnormals = str(normals)
-        strvertices = str(vertices)
-        items = str(gen.getNumNormals())
+        items = gen.getNumNormals()
         bb = fcmeshm.BoundBox
         bbmax = max (bb.XLength,bb.YLength,bb.ZLength)
         bbcenter = bb.Center
 
-        return strvertices,strnormals,items,bbmax,bbcenter
+        return vertices,normals,items,bbmax,bbcenter
 
     except:
         print "Something went wrong"

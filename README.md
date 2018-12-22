@@ -10,24 +10,14 @@ Installation:
 * Run Python interpreter inside the "nwgl" directory and try some examples.  
 
 Examples:  
-Import a STEP file, and export the first shape in the file as HTML:
+Import a STEP file, and export all shapes in the file as HTML:
 
 ``` 
 import noguiWebGLexport as nwgl
 import Part
 f = "piston.stp"
 s = Part.read(f)
-nwgl.export(s.Solids[0], "piston.html")
-```
-
-Create a bottle:
-
-```
-import noguiWebGLexport as nwgl
-import Part  
-import MakeBottle  
-bottle = MakeBottle.makeBottle() 
-nwgl.export(bottle, "bottle.html")
+nwgl.export(s.Solids, "piston.html")
 ```
 
 Official FreeCAD website:  
