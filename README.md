@@ -1,6 +1,6 @@
 nwgl
 ==========
-nwgl stands for: No-GUI WebGL exporter. It is a simple headless WebGL/HTML5 exported for FreeCAD. It exports only one shape, not shape list. 
+nwgl stands for: No-GUI WebGL exporter. It is a simple headless WebGL/HTML5 exported for FreeCAD. Supports multiple shapes export (as a single mesh).
 Screenshot: http://imgur.com/YRC8DQk
 
 Installation:  

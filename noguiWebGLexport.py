@@ -24,7 +24,8 @@
 
 "FreeCAD no-gui webgl exporter"
 
-FREECADPATH = '/usr/lib/freecad-daily/lib'
+#FREECADPATH = '/usr/lib/freecad-daily/lib'
+FREECADPATH = '/mnt/ssd/FreeCAD/build/lib/'
 import sys
 sys.path.append(FREECADPATH)
 import FreeCAD,Part,MeshPart,Mesh
@@ -37,7 +38,7 @@ def export(exportList,filename):
     "exports the given objects to a .html file"
     
     nshp = len(exportList)
-    print "Exporting: " + str(nshp) + " shapes"
+    print ("Exporting: " + str(nshp) + " shapes")
     n = 0
     VerticesData = []
     VertexNormalsData = []
@@ -49,10 +50,10 @@ def export(exportList,filename):
         VerticesData = VerticesData + Verts
         VertexNormalsData = VertexNormalsData + Vnorms
         ItemsData = ItemsData + Itms
-        print "Shape: " + str(n) + " of " +str(nshp)
+        print ("Shape: " + str(n) + " of " +str(nshp))
         
     html = getHTML(VerticesData,VertexNormalsData,ItemsData,BBMax,BBCenter) 
-    print "Saving: " + filename
+    print ("Saving: " + filename)
     outfile = pythonopen(filename,"wb")
     outfile.write(html)
     outfile.close()
@@ -107,7 +108,7 @@ def getObjectData(shape):
         return vertices,normals,items,bbmax,bbcenter
 
     except:
-        print "Something went wrong"
+        print ("Something went wrong")
         return "","",0,0,0
 
 def getTemplate():
